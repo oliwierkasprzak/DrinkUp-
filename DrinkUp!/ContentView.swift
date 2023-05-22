@@ -98,10 +98,28 @@ struct ContentView: View {
             
             Button("Cancel", role: .cancel) { }
         }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) {
+            output in
+            checkForReset()
+        }
+        
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.significantTimeChangeNotification)) {
+            output in
+            checkForReset()
+        }
     }
+    
     func add(_ amount: Double) {
         lastDrinkDate = Date.now.timeIntervalSinceReferenceDate
         waterConsumed += amount
+    }
+    
+    func checkForReset() {
+        let lastCheck = Date(timeIntervalSinceReferenceDate: lastDrinkDate)
+        
+        if Calendar.current.isDateInToday(lastCheck) == false {
+            waterConsumed = 0
+        }
     }
 }
 
