@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import WidgetKit
 
 struct ContentView: View {
     @AppStorage("waterConsumed") private var waterConsumed = 1800.0
@@ -66,7 +67,12 @@ struct ContentView: View {
                     .font(.title.weight(.ultraLight))
                     .scaledToFit()
                     .foregroundStyle(
-                        .linearGradient(stops: [.init(color: .clear, location: 0), .init(color: .clear, location: 1 - goalProgress), .init(color: .white, location: 1 - goalProgress), .init(color: .white, location: 1)], startPoint: .top, endPoint: .bottom)
+                        .linearGradient(stops: [
+                            .init(color: .clear, location: 0),
+                            .init(color: .clear, location: 1 - goalProgress),
+                            .init(color: .white, location: 1 - goalProgress),
+                            .init(color: .white, location: 1)
+                        ], startPoint: .top, endPoint: .bottom)
                     )
                     .overlay(
                         Image(systemName: "drop")
@@ -106,6 +112,12 @@ struct ContentView: View {
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.significantTimeChangeNotification)) {
             output in
             checkForReset()
+        }
+        .onChange(of: waterConsumed) { _ in
+            WidgetCenter.shared.reloadAllTimelines()
+        }
+        .onChange(of: waterRequired) { _ in
+            WidgetCenter.shared.reloadAllTimelines()
         }
     }
     
